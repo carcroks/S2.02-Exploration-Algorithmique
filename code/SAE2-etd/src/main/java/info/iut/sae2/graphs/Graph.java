@@ -22,10 +22,12 @@ public class Graph implements IGraph{
         edges = new HashSet<Edge>();
     }
     
+    @Override
     public Node addNode(){
         
     }
     
+    @Override
     public Node addNode(Node n){
         if (n==null)
             return null;
@@ -40,6 +42,7 @@ public class Graph implements IGraph{
         return e;
     }
     
+    @Override
     public Edge addEdge(Node src, Node tgt){
         if (src == null || tgt == null)
             return null;
@@ -48,6 +51,7 @@ public class Graph implements IGraph{
         return e;
     }
     
+    @Override
     public void delNode(Node n){
         if (n != null)
         {
@@ -59,6 +63,7 @@ public class Graph implements IGraph{
         }
     }
     
+    @Override
     public void delEdge(Edge e){
         if (e != null)
         {
@@ -69,15 +74,135 @@ public class Graph implements IGraph{
         }
     }
     
+    @Override
     public int numberOfNodes(){
         return nodes.size();
     }
     
+    @Override
     public int numberOfEdges(){
         return edges.size();
     }
     
+    @Override
     public ArrayList<Node> getNeighbors(Node n){
+        if (n == null)
+            return null;
+        return new ArrayList<>(n.getNeighbour());
+    }
+    
+    @Override
+    public ArrayList<Node> getSuccesors(Node n){
+        
+    }
+    
+    @Override
+    public ArrayList<Node> getPredecessors(Node n){
+        
+    }
+    
+    @Override
+    public ArrayList<Edge> getInOutEdges(Node n){
+        
+    }
+    
+    @Override
+    public ArrayList<Edge> getInEdges(Node n){
+        
+    }
+    
+    @Override
+    public ArrayList<Edge> getOutEdges(Node n){
+        
+    }
+    
+    @Override
+    public ArrayList<Node> getNodes(){
+        
+    }
+    
+    @Override
+    public ArrayList<Edge> getEdges(){
+        
+    }
+    
+    @Override
+    public Node source(Edge e){
+        
+    }
+    
+    @Override
+    public Node target(Edge e){
+        
+    }
+    
+    @Override
+    public int inDegree(Node n){
+        
+    }
+    
+    @Override
+    public int outDegree(Node n){
+        
+    }
+    
+    @Override
+    public int degree(Node n){
+        
+    }
+    
+    @Override
+    public boolean existEdge(Node src, Node tgt, boolean oriented){
+        
+    }
+    
+    @Override
+    public Edge getEdge(Node src, Node tgt, boolean oriented){
+        
+    }
+    
+    @Override
+    public Coord getNodePosition(Node n){
+        
+    }
+    
+    @Override
+    public ArrayList<Coord> getEdgePosition(Edge e){
+        
+    }
+    
+    @Override
+    public void setNodePosition(Node n, Coord c){
+        
+    }
+    
+    @Override
+    public void setEdgePosition(Edge e, ArrayList<Coord> bends){
+        
+    }
+    
+    @Override
+    public void setAllNodesPositions(Coord c){
+        
+    }
+    
+    @Override
+    public void setAllEdgesPositions(ArrayList<Coord> bends){
+        
+    }
+    
+    @Override
+    public ArrayList<Coord> getBoundingBox(){
+        
+    }
+    
+    @Override
+    public Graph getMinimumSpanningTree(){
+        
+    }
+    
+    @Override
+    public void bundle(){
         
     }
 
