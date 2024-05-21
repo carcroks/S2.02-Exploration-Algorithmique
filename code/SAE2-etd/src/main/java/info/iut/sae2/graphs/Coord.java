@@ -1,4 +1,4 @@
-package info.iut.sae2.graphs;
+package main.java.info.iut.sae2.graphs;
 
 public class Coord {
     private double x, y;
@@ -10,7 +10,9 @@ public class Coord {
         this.y = y;
     }
     public double dist(Coord c){
-	// TODO
+        if (c==null)
+            return -1;
+        return Math.sqrt(Math.pow(this.x - c.getX(), 2) + Math.pow(this.y - c.getY(), 2));
     }
     public double getX() { return x; }
     public double getY() { return y; }
