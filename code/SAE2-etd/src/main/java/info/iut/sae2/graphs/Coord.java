@@ -1,7 +1,7 @@
 package main.java.info.iut.sae2.graphs;
 
 public class Coord {
-    private double x, y;
+    public double x, y;
     public Coord(){
         x = y = 0.;
     }

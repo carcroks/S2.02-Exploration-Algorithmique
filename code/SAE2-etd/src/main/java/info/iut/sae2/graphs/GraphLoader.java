@@ -60,4 +60,5 @@ public class GraphLoader {
 
     private static void loadEdgesFromFile(Graph g, HashMap<Integer, Node> nodeMap, String edgeFileName) {
 	// TODO
+    }
 }
