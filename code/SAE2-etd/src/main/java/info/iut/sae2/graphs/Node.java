@@ -101,8 +101,13 @@ public class Node {
     }
     
     public void setCoord(Coord c){
-        if (c == null)
+        if (c != null)
             coord = c;
+    }
+    
+    @Override
+    public String toString(){
+        return("X : " + coord.getX() + "  Y : " + coord.getY());
     }
     
 }

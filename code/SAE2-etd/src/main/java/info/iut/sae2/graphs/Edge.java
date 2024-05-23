@@ -34,4 +34,9 @@ public class Edge {
         return destination;
     }
     
+    @Override
+    public String toString(){
+        return ("source : " + source.toString() + "\n" +"destinaton :" + destination.toString());
+    }
+    
 }

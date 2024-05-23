@@ -40,7 +40,7 @@ public class Graph implements IGraph{
     
     @Override
     public Edge addEdge(Edge e){
-        if (e==null || e.getSource() != null || e.getDestination() != null)
+        if (e==null || e.getSource() == null || e.getDestination() == null)
             return null;
         edges.add(e);
         e.getSource().addNeighbour(e.getDestination());
@@ -148,7 +148,7 @@ public class Graph implements IGraph{
     public ArrayList<Edge> getOutEdges(Node n){
         if (n == null)
             return null;
-        HashSet<Edge> res = new HashSet<Edge>();
+        HashSet<Edge> res = new HashSet<>();
         for (Edge e : edges){
             if (e.getSource().equals(n))
                 res.add(e);
@@ -196,7 +196,7 @@ public class Graph implements IGraph{
     
     @Override
     public int degree(Node n){
-        if (n== null)
+        if (n == null)
             return -1;
         return n.getNeighbour().size();
     }
@@ -253,13 +253,14 @@ public class Graph implements IGraph{
     
     @Override
     public void setNodePosition(Node n, Coord c){
-        if (n != null && c != null)
+        if (n != null && c != null){
             n.setCoord(c);
+        }
     }
     
     @Override
     public void setEdgePosition(Edge e, ArrayList<Coord> bends){
-        if (e != null || !bends.contains(null)){
+        if (e != null && !bends.contains(null)){
             e.getSource().setCoord(bends.get(0));
             e.getDestination().setCoord(bends.get(1));
         }
@@ -285,22 +286,22 @@ public class Graph implements IGraph{
     
     @Override
     public ArrayList<Coord> getBoundingBox(){
-        double maxy;
-        double miny;
-        double maxx;
-        double minx;
+        double maxy = Double.MIN_VALUE;
+        double miny = Double.MAX_VALUE;
+        double maxx = Double.MIN_VALUE;
+        double minx = Double.MAX_VALUE;
         
         for (Node n : nodes){
             if (n.getCoord().getX()<minx)
                 minx = n.getCoord().getX();
-            if (n.getCoord().getX()>maxx)
+            else if (n.getCoord().getX()>maxx)
                 maxx = n.getCoord().getX();
-            if (n.getCoord().getX()<miny)
+            if (n.getCoord().getY()<miny)
                 miny = n.getCoord().getY();
-            if (n.getCoord().getX()>maxy)
+            else if (n.getCoord().getY()>maxy)
                 maxy = n.getCoord().getY();
         }
-        return new ArrayList<>(Arrays.asList(new Coord(maxx, maxy), new Coord(minx, miny)));
+        return new ArrayList<>(Arrays.asList(new Coord(minx, miny), new Coord(maxx, maxy)));
     }
     
     @Override

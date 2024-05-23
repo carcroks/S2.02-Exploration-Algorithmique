@@ -59,6 +59,30 @@ public class GraphLoader {
     }
 
     private static void loadEdgesFromFile(Graph g, HashMap<Integer, Node> nodeMap, String edgeFileName) {
-	// TODO
+	Path pathToFile = Paths.get(edgeFileName);
+
+        try (BufferedReader br = Files.newBufferedReader(pathToFile,
+                StandardCharsets.US_ASCII)) {
+
+            String line = br.readLine();
+            while (line != null) {
+                String[] attributes = line.split(";");
+                if (attributes.length != 2) {
+                    System.err.println("Error while loading nodes : " + attributes.length + " column(s)");
+                    continue;
+                }
+                int sourceId = Integer.parseInt(attributes[0]);
+                int destId = Integer.parseInt(attributes[1]);
+                
+                Node source = nodeMap.get(sourceId);
+                Node dest = nodeMap.get(destId);
+
+                g.addEdge(source, dest);
+                line = br.readLine();
+            }
+
+        } catch (IOException ioe) {
+            ioe.printStackTrace();
+        }
     }
 }
