@@ -36,7 +36,7 @@ public class Edge {
     
     @Override
     public String toString(){
-        return ("source : " + source.toString() + "\n" +"destinaton :" + destination.toString());
+        return ("source : " + source.toString() + "\n" +"destinaton :" + destination.toString() + "\n");
     }
     
 }

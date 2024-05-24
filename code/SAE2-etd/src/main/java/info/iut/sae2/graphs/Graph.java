@@ -14,9 +14,9 @@ import java.util.HashSet;
  */
 public class Graph implements IGraph{
     
-    HashSet<Node> nodes;
+    private HashSet<Node> nodes;
     
-    HashSet<Edge> edges;
+    private HashSet<Edge> edges;
     
     public Graph(){
         nodes= new HashSet<Node>();
@@ -42,6 +42,10 @@ public class Graph implements IGraph{
     public Edge addEdge(Edge e){
         if (e==null || e.getSource() == null || e.getDestination() == null)
             return null;
+        if (!nodes.contains(e.getSource()))
+            nodes.add(e.getSource());
+        if(!nodes.contains(e.getDestination()))
+            nodes.add(e.getDestination());
         edges.add(e);
         e.getSource().addNeighbour(e.getDestination());
         e.getDestination().addNeighbour(e.getSource());
@@ -54,6 +58,10 @@ public class Graph implements IGraph{
     public Edge addEdge(Node src, Node tgt){
         if (src == null || tgt == null)
             return null;
+        if (!nodes.contains(src))
+            nodes.add(src);
+        if(!nodes.contains(tgt))
+            nodes.add(tgt);
         Edge e = new Edge(src,tgt);
         edges.add(e);
         src.addNeighbour(tgt);
@@ -67,12 +75,20 @@ public class Graph implements IGraph{
     public void delNode(Node n){
         if (n != null)
         {
-            for (Node node : nodes){
-                //la méthode remove ne retire que si l'élement est dans l'ensemble
-                node.removeNeighbour(n);
-                node.removeSucessor(n);
-                node.removePredecessor(n);
+            HashSet<Edge> toDelete = new HashSet<>();
+            for (Edge e : edges){
+                if (e.getSource() == n){
+                    e.getDestination().removePredecessor(n);
+                    e.getDestination().removeNeighbour(n);
+                    toDelete.add(e);
+                }
+                else if (e.getDestination() == n){
+                    e.getSource().removeSucessor(n);
+                    e.getSource().removeNeighbour(n);
+                    toDelete.add(e);
+                }
             }
+            edges.removeAll(toDelete);
             nodes.remove(n);
         }
     }
@@ -84,7 +100,7 @@ public class Graph implements IGraph{
             e.getSource().removeNeighbour(e.getDestination());
             e.getDestination().removeNeighbour(e.getSource());
             e.getSource().removeSucessor(e.getDestination());
-            e.getDestination().removeSucessor(e.getSource());         
+            e.getDestination().removePredecessor(e.getSource());         
             edges.remove(e);
         }
     }
@@ -136,7 +152,7 @@ public class Graph implements IGraph{
     public ArrayList<Edge> getInEdges(Node n){
         if (n == null)
             return null;
-        HashSet<Edge> res = new HashSet<Edge>();
+        HashSet<Edge> res = new HashSet<>();
         for (Edge e : edges){
             if (e.getDestination().equals(n))
                 res.add(e);

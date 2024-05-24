@@ -22,6 +22,15 @@ public class GraphTest {
     public GraphTest() {
     }
     
+    
+    @Test
+    public void testAddNode_noArgs(){
+        Graph g = new Graph();
+        assert(g.getNodes().size() == 0);
+        g.addNode();
+        g.addNode();
+        assert(g.getNodes().size() == 2);
+    }
 
     /**
      * Test of addNode method, of class Graph.
@@ -29,11 +38,15 @@ public class GraphTest {
     @Test
     public void testAddNode_Node() {
         System.out.println("addNode");
-        Node n = new Node(new Coord(0,0));
+        Node n1 = new Node(new Coord(1,1));
+        Node n2 = new Node(new Coord(2,2));
         Graph g = new Graph();
-        Node result = g.addNode(n);
-        Node expResult = g.getNodes().get(0);
-        assertEquals(expResult, result);
+        assert(g.getNodes().size() == 0);
+        g.addNode(n1);
+        g.addNode(n2);
+        assert(g.getNodes().size() == 2);
+        assert(g.getNodes().contains(n1));
+        assert(g.getNodes().contains(n2));
     }
 
     /**
@@ -42,11 +55,19 @@ public class GraphTest {
     @Test
     public void testAddEdge_Edge() {
         System.out.println("addEdge");
-        Edge e = new Edge(new Node(new Coord(0,0)), new Node(new Coord(1,1)));
+        Node n1 = new Node(new Coord(1,1));
+        Node n2 = new Node(new Coord(2,2));
+        Node n3 = new Node(new Coord(0,0));
         Graph g = new Graph();
-        Edge result = g.addEdge(e);
-        Edge expResult = g.getEdge(new Node(new Coord(0,0)), new Node(new Coord(1,1)), false);
-        assertEquals(expResult, result);
+        Edge e1 = new Edge(n1,n2);
+        Edge e2 = new Edge(n2,n1);
+        Edge e3 = new Edge(n1,n3);
+        g.addEdge(e1);
+        g.addEdge(e2);
+        g.addEdge(e3);
+        assert(g.existEdge(n1, n2, true));
+        assert(g.existEdge(n2, n1, true));
+        assert(!g.existEdge(n3, n2, true)); 
     }
 
     /**
@@ -55,14 +76,16 @@ public class GraphTest {
     @Test
     public void testAddEdge_Node_Node() {
         System.out.println("addEdge");
-        Node src = null;
-        Node tgt = null;
-        Graph instance = new Graph();
-        Edge expResult = null;
-        Edge result = instance.addEdge(src, tgt);
-        assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+        Node n1 = new Node(new Coord(1,1));
+        Node n2 = new Node(new Coord(2,2));
+        Node n3 = new Node(new Coord(0,0));
+        Graph g = new Graph();
+        g.addEdge(n1,n2);
+        g.addEdge(n2,n1);
+        g.addEdge(n1,n3);
+        assert(g.existEdge(n1, n2, true));
+        assert(g.existEdge(n2, n1, true));
+        assert(!g.existEdge(n3, n2, true));        
     }
 
     /**
@@ -71,11 +94,22 @@ public class GraphTest {
     @Test
     public void testDelNode() {
         System.out.println("delNode");
-        Node n = null;
-        Graph instance = new Graph();
-        instance.delNode(n);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+        Node n1 = new Node(new Coord(1,1));
+        Node n2 = new Node(new Coord(2,2));
+        Node n3 = new Node(new Coord(0,0));
+        Graph g = new Graph();
+        Edge e1 = new Edge(n1,n2);
+        Edge e2 = new Edge(n2,n1);
+        Edge e3 = new Edge(n1,n3);
+        g.addEdge(e1);
+        g.addEdge(e2);
+        g.addEdge(e3);
+        g.delNode(n2);
+        assert(2 == g.numberOfNodes());
+        assert(1 == g.numberOfEdges());
+        assert(!n1.getNeighbour().contains(n2));
+        assert(!n1.getSucessor().contains(n2));
+        assert(!n1.getPredecessor().contains(n2));
     }
 
     /**
@@ -84,11 +118,19 @@ public class GraphTest {
     @Test
     public void testDelEdge() {
         System.out.println("delEdge");
-        Edge e = null;
-        Graph instance = new Graph();
-        instance.delEdge(e);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+        Node n1 = new Node(new Coord(1,1));
+        Node n2 = new Node(new Coord(2,2));
+        Node n3 = new Node(new Coord(0,0));
+        Graph g = new Graph();
+        Edge e1 = new Edge(n1,n2);
+        Edge e2 = new Edge(n2,n1);
+        Edge e3 = new Edge(n2,n3);
+        g.addEdge(e1);
+        g.addEdge(e2);
+        g.addEdge(e3);
+        g.delEdge(e3);
+        assert(2 == g.numberOfEdges());
+        assert(g.getNeighbors(n2).size() == 1);
     }
 
     /**
@@ -97,12 +139,17 @@ public class GraphTest {
     @Test
     public void testNumberOfNodes() {
         System.out.println("numberOfNodes");
-        Graph instance = new Graph();
-        int expResult = 0;
-        int result = instance.numberOfNodes();
-        assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+        Node n1 = new Node(new Coord(1,1));
+        Node n2 = new Node(new Coord(2,2));
+        Node n3 = new Node(new Coord(0,0));
+        Graph g = new Graph();
+        g.addNode(n1);
+        g.addNode(n2);
+        g.addNode(n3);
+        assert(3 == g.numberOfNodes());
+        Node n4 = new Node(new Coord(4,4));
+        g.addNode(n4);
+        assert(4 == g.numberOfNodes());
     }
 
     /**
@@ -111,12 +158,22 @@ public class GraphTest {
     @Test
     public void testNumberOfEdges() {
         System.out.println("numberOfEdges");
-        Graph instance = new Graph();
-        int expResult = 0;
-        int result = instance.numberOfEdges();
-        assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+        Node n1 = new Node(new Coord(1,1));
+        Node n2 = new Node(new Coord(2,2));
+        Node n3 = new Node(new Coord(0,0));
+        Graph g = new Graph();
+        Edge e1 = new Edge(n1,n2);
+        Edge e2 = new Edge(n2,n1);
+        Edge e3 = new Edge(n2,n3);
+        g.addEdge(e1);
+        g.addEdge(e2);
+        g.addEdge(e3);
+        int expResult = 3;
+        int result = g.numberOfEdges();
+        assert(result == expResult);
+        Edge e4 = new Edge(n2,n3);
+        g.addEdge(e4);
+        assert(4 == g.numberOfEdges());
     }
 
     /**
@@ -125,13 +182,24 @@ public class GraphTest {
     @Test
     public void testGetNeighbors() {
         System.out.println("getNeighbors");
-        Node n = null;
-        Graph instance = new Graph();
-        ArrayList<Node> expResult = null;
-        ArrayList<Node> result = instance.getNeighbors(n);
-        assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+        Node n1 = new Node(new Coord(1,1));
+        Node n2 = new Node(new Coord(2,2));
+        Node n3 = new Node(new Coord(0,0));
+        Graph g = new Graph();
+        Edge e1 = new Edge(n1,n2);
+        Edge e2 = new Edge(n2,n1);
+        Edge e3 = new Edge(n2,n3);
+        Edge e4 = new Edge(n3,n1);
+        g.addEdge(e1);
+        g.addEdge(e2);
+        g.addEdge(e3);
+        g.addEdge(e4);
+        ArrayList<Node> expResult1 = new ArrayList<>(Arrays.asList(n1,n3));
+        ArrayList<Node> result1 = g.getNeighbors(n2);
+        ArrayList<Node> expResult2 = new ArrayList<>(Arrays.asList(n2, n3));
+        ArrayList<Node> result2 = g.getNeighbors(n1);
+        assertArrayEquals(expResult1.toArray(), result1.toArray());
+        assertArrayEquals(expResult2.toArray(), result2.toArray());
     }
 
     /**
@@ -151,9 +219,9 @@ public class GraphTest {
         g.addEdge(e2);
         g.addEdge(e3);
         ArrayList<Node> expResult1 = new ArrayList<>(Arrays.asList(n1,n3));
-        ArrayList<Node> result1 = g.getPredecessors(n2);
+        ArrayList<Node> result1 = g.getSuccesors(n2);
         ArrayList<Node> expResult2 = new ArrayList<>(Arrays.asList(n2));
-        ArrayList<Node> result2 = g.getPredecessors(n1);
+        ArrayList<Node> result2 = g.getSuccesors(n1);
         assertArrayEquals(expResult1.toArray(), result1.toArray());
         assertArrayEquals(expResult2.toArray(), result2.toArray());
     }
@@ -556,5 +624,4 @@ public class GraphTest {
         // TODO review the generated test code and remove the default call to fail.
         fail("The test case is a prototype.");
     }
-    
 }
