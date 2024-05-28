@@ -266,9 +266,9 @@ public class Graph implements IGraph{
     public ArrayList<Coord> getEdgePosition(Edge e){
         if (e == null)
             return null;
-        return new ArrayList<>(Arrays.asList(e.getSource().getCoord(), e.getDestination().getCoord()));
+        return e.getBends();
     }
-    
+     
     @Override
     public void setNodePosition(Node n, Coord c){
         if (n != null && c != null){
@@ -278,9 +278,8 @@ public class Graph implements IGraph{
     
     @Override
     public void setEdgePosition(Edge e, ArrayList<Coord> bends){
-        if (e != null && !bends.contains(null) && bends.size()==2){
-            e.getSource().setCoord(bends.get(0));
-            e.getDestination().setCoord(bends.get(1));
+        if (e != null && !bends.contains(null)){
+            e.setBends(bends);
         }
     }
     
@@ -295,7 +294,7 @@ public class Graph implements IGraph{
     
     @Override
     public void setAllEdgesPositions(ArrayList<Coord> bends){
-        if (!bends.contains(null) && bends.size() == 2){
+        if (!bends.contains(null)){
             for (Edge e : edges){
                 setEdgePosition(e, bends);
             }
@@ -354,8 +353,40 @@ public class Graph implements IGraph{
     
     @Override
     public void bundle(){
-        
+        Graph g = getMinimumSpanningTree();
+        for (Edge e : edges){
+            HashMap<Node, Node> predecessorMap = new HashMap<>();
+            Boolean trouve = false;
+            ArrayList<Node> toCheck= new ArrayList<>();
+            toCheck.add(e.getSource());
+            Node actualNode = null;
+            while(!trouve){
+                actualNode = toCheck.get(0);
+                if (actualNode.equals(e.getDestination()))
+                    trouve = true;
+                else{
+                    toCheck.remove(0);
+                    System.out.println(actualNode.getNeighbour().size()); 
+                    for (Node n: g.getNeighbors(actualNode)){
+                        if (!predecessorMap.containsKey(n));{
+                            toCheck.add(n);
+                            predecessorMap.put(n, actualNode);
+                        }
+                    }
+                }
+            }
+            System.out.println("a");
+            Node predecessor = predecessorMap.get(actualNode);
+            while (!predecessor.equals(e.getSource())){
+                e.insertBendAtIndexZero(predecessor.getCoord());
+                predecessor = predecessorMap.get(predecessor);
+            }
+            System.out.println("b");
+            System.out.println(e);
+        }
+        System.out.println("c");
     }
+    
     
 
     

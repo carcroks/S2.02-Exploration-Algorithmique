@@ -487,11 +487,15 @@ public class GraphTest {
     @Test
     public void testGetEdgePosition() {
         System.out.println("getEdgePosition");
+        Coord c1 = new Coord(3,3);
+        Coord c2 = new Coord(4,4);
+        
         Node n1 = new Node(new Coord(0,0));
         Node n2 = new Node(new Coord(1,1));
         Edge e = new Edge(n1,n2);
         Graph g = new Graph();
         g.addEdge(e);
+        e.setBends(new ArrayList<>(Arrays.asList(c1,c2)));
         ArrayList<Coord> expResult = new ArrayList<>(Arrays.asList(n1.getCoord(),n2.getCoord()));
         ArrayList<Coord> result = g.getEdgePosition(e);
         assertEquals(expResult, result);

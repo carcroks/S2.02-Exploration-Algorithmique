@@ -4,6 +4,7 @@
  */
 package main.java.info.iut.sae2.graphs;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 
 /**
@@ -16,14 +17,14 @@ public class Edge {
     private Node destination;
     
     /*
-        Ensemble des points sauf source et destination pour dessiner l'arrête sour forme de croube de Bézier
+        Ensemble des points sauf source et destination pour dessiner l'arrête sour forme de courbe de Bézier
     */
-    private HashSet<Coord> points;
+    private ArrayList<Coord> bends;
     
     public Edge(Node s, Node d){
         source = s;
         destination = d;
-        points = new HashSet<Coord>();
+        bends = new ArrayList<Coord>();
     }
     
     public Node getSource(){
@@ -40,7 +41,24 @@ public class Edge {
     
     @Override
     public String toString(){
-        return ("source : " + source.toString() + "\n" +"destinaton :" + destination.toString() + "\n");
+        String s = ("source : " + source.toString() + "\n" +"destinaton : " + destination.toString() + "\n" + "bends : ");
+        for (Coord c : bends){
+            s += c.toString() + " , ";
+        }
+        s += "\n";
+        return s;
+    }
+    
+    public ArrayList<Coord> getBends(){
+        return bends;
+    }
+    
+    public void setBends(ArrayList<Coord> p){
+        bends = p;
+    }
+    
+    public void insertBendAtIndexZero(Coord c){
+        bends.add(0, c);
     }
     
     
