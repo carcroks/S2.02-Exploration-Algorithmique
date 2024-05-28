@@ -4,6 +4,7 @@
  */
 package main.java.info.iut.sae2.graphs;
 
+import java.awt.BorderLayout;
 import java.util.ArrayList;
 import java.util.Arrays;
 import org.junit.After;
@@ -107,9 +108,9 @@ public class GraphTest {
         g.delNode(n2);
         assert(2 == g.numberOfNodes());
         assert(1 == g.numberOfEdges());
-        assert(!n1.getNeighbour().contains(n2));
-        assert(!n1.getSucessor().contains(n2));
-        assert(!n1.getPredecessor().contains(n2));
+        assert(!g.getNeighbors(n1).contains(n2));
+        assert(!g.getSuccesors(n1).contains(n2));
+        assert(!g.getPredecessors(n1).contains(n2));
     }
 
     /**
@@ -266,9 +267,9 @@ public class GraphTest {
         g.addEdge(e1);
         g.addEdge(e2);
         g.addEdge(e3);
-        ArrayList<Edge> expResult1 = new ArrayList<>(Arrays.asList(e3,e1,e2));
+        ArrayList<Edge> expResult1 = new ArrayList<>(Arrays.asList(e2,e3,e1));
         ArrayList<Edge> result1 = g.getInOutEdges(n2);
-        ArrayList<Edge> expResult2 = new ArrayList<>(Arrays.asList(e1,e2));
+        ArrayList<Edge> expResult2 = new ArrayList<>(Arrays.asList(e2,e1));
         ArrayList<Edge> result2 = g.getInOutEdges(n1);
         assertArrayEquals(expResult1.toArray(), result1.toArray());
         assertArrayEquals(expResult2.toArray(), result2.toArray());
@@ -314,7 +315,7 @@ public class GraphTest {
         g.addEdge(e1);
         g.addEdge(e2);
         g.addEdge(e3);
-        ArrayList<Edge> expResult1 = new ArrayList<>(Arrays.asList(e3,e2));
+        ArrayList<Edge> expResult1 = new ArrayList<>(Arrays.asList(e2,e3));
         ArrayList<Edge> result1 = g.getOutEdges(n2);
         ArrayList<Edge> expResult2 = new ArrayList<>(Arrays.asList(e1));
         ArrayList<Edge> result2 = g.getOutEdges(n1);
@@ -354,7 +355,7 @@ public class GraphTest {
         Edge e2 = new Edge(n2,n3);
         g.addEdge(e1);
         g.addEdge(e2);
-        ArrayList<Edge> expResult = new ArrayList<>(Arrays.asList(e1,e2));
+        ArrayList<Edge> expResult = new ArrayList<>(Arrays.asList(e2,e1));
         ArrayList<Edge> result = g.getEdges();
         assertArrayEquals(expResult.toArray(), result.toArray());
     }
@@ -493,10 +494,10 @@ public class GraphTest {
         Node n1 = new Node(new Coord(0,0));
         Node n2 = new Node(new Coord(1,1));
         Edge e = new Edge(n1,n2);
+        e.setBends(new ArrayList<>(Arrays.asList(c1,c2)));
         Graph g = new Graph();
         g.addEdge(e);
-        e.setBends(new ArrayList<>(Arrays.asList(c1,c2)));
-        ArrayList<Coord> expResult = new ArrayList<>(Arrays.asList(n1.getCoord(),n2.getCoord()));
+        ArrayList<Coord> expResult = new ArrayList<>(Arrays.asList(c1,c2));
         ArrayList<Coord> result = g.getEdgePosition(e);
         assertEquals(expResult, result);
     }
@@ -528,14 +529,13 @@ public class GraphTest {
         Coord c21 = new Coord(2,2);
         Coord c22 = new Coord(1,1);
         Edge e1 = new Edge(new Node(c11), new Node(c12));
-        Edge e2 = new Edge(new Node(c21), new Node(c22));
         ArrayList<Coord> bends = new ArrayList<>(Arrays.asList(c21, c22));
         Graph g = new Graph();
+        g.addEdge(e1);
         g.setEdgePosition(e1, bends);
-        assert(e1.getSource().getCoord().getX() == c21.getX());
-        assert(e1.getSource().getCoord().getY() == c21.getY());
-        assert(e1.getDestination().getCoord().getX() == c22.getX());
-        assert(e1.getDestination().getCoord().getY() == c22.getY());
+        ArrayList<Coord> expResult = new ArrayList<>(Arrays.asList(c21,c22));
+        ArrayList<Coord> result = g.getEdgePosition(e1);
+        assertEquals(expResult, result);
     }
 
     /**
@@ -570,16 +570,15 @@ public class GraphTest {
         Graph g = new Graph();
         Coord c1 = new Coord(1,1);
         Coord c2 = new Coord(2,2);
-        
+        ArrayList<Coord> bends = new ArrayList<>(Arrays.asList(c1,c2));
         g.addNode(n1);
         g.addNode(n2);
         g.addNode(n3);
         g.addEdge(n1,n2);
         g.addEdge(n2,n3);
-        g.setAllEdgesPositions(new ArrayList<>(Arrays.asList(c1, c2)));
-        assert(n1.getCoord() == c1);
-        assert(n2.getCoord() == c1);
-        assert(n3.getCoord() == c2);
+        g.setAllEdgesPositions(bends);
+        for (Edge e: g.getEdges())
+            assert(bends == g.getEdgePosition(e));
     }
 
     /**

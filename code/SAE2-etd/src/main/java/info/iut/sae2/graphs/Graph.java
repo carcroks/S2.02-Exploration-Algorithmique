@@ -20,15 +20,25 @@ public class Graph implements IGraph{
     
     private HashSet<Edge> edges;
     
+    private HashMap<Node, HashSet<Node>> Neighbors;
+    private HashMap<Node, HashSet<Node>> Sucessors;
+    private HashMap<Node, HashSet<Node>> Predecessors;
+    
     public Graph(){
-        nodes= new HashSet<Node>();
-        edges = new HashSet<Edge>();
+        nodes= new HashSet<>();
+        edges = new HashSet<>();
+        Neighbors = new HashMap<>();
+        Sucessors = new HashMap<>();
+        Predecessors = new HashMap<>();
     }
     
     @Override
     public Node addNode(){
         Node n = new Node(new Coord(0,0));
         nodes.add(n);
+        Neighbors.put(n, new HashSet<>());
+        Sucessors.put(n, new HashSet<>());
+        Predecessors.put(n, new HashSet<>());
         return n;
     }
     
@@ -37,6 +47,9 @@ public class Graph implements IGraph{
         if (n==null)
             return null;
         nodes.add(n);
+        Neighbors.put(n, new HashSet<>());
+        Sucessors.put(n, new HashSet<>());
+        Predecessors.put(n, new HashSet<>());
         return n;
     }
     
@@ -45,14 +58,14 @@ public class Graph implements IGraph{
         if (e==null || e.getSource() == null || e.getDestination() == null)
             return null;
         if (!nodes.contains(e.getSource()))
-            nodes.add(e.getSource());
+            addNode(e.getSource());
         if(!nodes.contains(e.getDestination()))
-            nodes.add(e.getDestination());
+            addNode(e.getDestination());
         edges.add(e);
-        e.getSource().addNeighbour(e.getDestination());
-        e.getDestination().addNeighbour(e.getSource());
-        e.getSource().addSucessor(e.getDestination());
-        e.getDestination().addPredecessor(e.getSource());
+        Neighbors.get(e.getSource()).add(e.getDestination());
+        Neighbors.get(e.getDestination()).add(e.getSource());
+        Sucessors.get(e.getSource()).add(e.getDestination());
+        Predecessors.get(e.getDestination()).add(e.getSource());
         return e;
     }
     
@@ -61,15 +74,15 @@ public class Graph implements IGraph{
         if (src == null || tgt == null)
             return null;
         if (!nodes.contains(src))
-            nodes.add(src);
+            addNode(src);
         if(!nodes.contains(tgt))
-            nodes.add(tgt);
+            addNode(tgt);
         Edge e = new Edge(src,tgt);
         edges.add(e);
-        src.addNeighbour(tgt);
-        tgt.addNeighbour(src);
-        src.addSucessor(tgt);
-        tgt.addPredecessor(src);
+        Neighbors.get(src).add(tgt);
+        Neighbors.get(tgt).add(src);
+        Sucessors.get(src).add(tgt);
+        Predecessors.get(tgt).add(src);
         return e;
     }
     
@@ -80,13 +93,13 @@ public class Graph implements IGraph{
             HashSet<Edge> toDelete = new HashSet<>();
             for (Edge e : edges){
                 if (e.getSource() == n){
-                    e.getDestination().removePredecessor(n);
-                    e.getDestination().removeNeighbour(n);
+                    Predecessors.get(e.getDestination()).remove(n);
+                    Neighbors.get(e.getDestination()).remove(n);
                     toDelete.add(e);
                 }
                 else if (e.getDestination() == n){
-                    e.getSource().removeSucessor(n);
-                    e.getSource().removeNeighbour(n);
+                    Sucessors.get(e.getSource()).remove(n);
+                    Neighbors.get(e.getSource()).remove(n);
                     toDelete.add(e);
                 }
             }
@@ -99,10 +112,10 @@ public class Graph implements IGraph{
     public void delEdge(Edge e){
         if (e != null)
         {
-            e.getSource().removeNeighbour(e.getDestination());
-            e.getDestination().removeNeighbour(e.getSource());
-            e.getSource().removeSucessor(e.getDestination());
-            e.getDestination().removePredecessor(e.getSource());         
+            Neighbors.get(e.getSource()).remove(e.getDestination());
+            Neighbors.get(e.getDestination()).remove(e.getSource());
+            Sucessors.get(e.getSource()).remove(e.getDestination());
+            Predecessors.get(e.getDestination()).remove(e.getSource());        
             edges.remove(e);
         }
     }
@@ -121,21 +134,21 @@ public class Graph implements IGraph{
     public ArrayList<Node> getNeighbors(Node n){
         if (n == null)
             return null;
-        return new ArrayList<>(n.getNeighbour());
+        return new ArrayList<>(Neighbors.get(n));
     }
     
     @Override
     public ArrayList<Node> getSuccesors(Node n){
         if (n == null)
             return null;
-        return new ArrayList<>(n.getSucessor());
+        return new ArrayList<>(Sucessors.get(n));
     }
     
     @Override
     public ArrayList<Node> getPredecessors(Node n){
         if (n == null)
             return null;
-        return new ArrayList<>(n.getPredecessor());
+        return new ArrayList<>(Predecessors.get(n));
     }
     
     @Override
@@ -202,21 +215,21 @@ public class Graph implements IGraph{
     public int inDegree(Node n){
         if (n == null)
             return -1;
-        return (n.getPredecessor().size());
+        return (Predecessors.get(n).size());
     }
     
     @Override
     public int outDegree(Node n){
         if (n == null)
             return -1;
-        return (n.getSucessor().size());
+        return (Sucessors.get(n).size());
     }
     
     @Override
     public int degree(Node n){
         if (n == null)
             return -1;
-        return n.getNeighbour().size();
+        return (Neighbors.get(n).size());
     }
     
     @Override
@@ -354,8 +367,10 @@ public class Graph implements IGraph{
     @Override
     public void bundle(){
         Graph g = getMinimumSpanningTree();
+        System.out.println(edges.size());
         for (Edge e : edges){
             HashMap<Node, Node> predecessorMap = new HashMap<>();
+            predecessorMap.put(e.getSource(), new Node(new Coord(0,0)));
             Boolean trouve = false;
             ArrayList<Node> toCheck= new ArrayList<>();
             toCheck.add(e.getSource());
@@ -366,29 +381,19 @@ public class Graph implements IGraph{
                     trouve = true;
                 else{
                     toCheck.remove(0);
-                    System.out.println(actualNode.getNeighbour().size()); 
                     for (Node n: g.getNeighbors(actualNode)){
-                        if (!predecessorMap.containsKey(n));{
+                        if (!predecessorMap.containsKey(n)){
                             toCheck.add(n);
                             predecessorMap.put(n, actualNode);
                         }
                     }
                 }
             }
-            System.out.println("a");
             Node predecessor = predecessorMap.get(actualNode);
             while (!predecessor.equals(e.getSource())){
                 e.insertBendAtIndexZero(predecessor.getCoord());
                 predecessor = predecessorMap.get(predecessor);
-            }
-            System.out.println("b");
-            System.out.println(e);
+            }    
         }
-        System.out.println("c");
     }
-    
-    
-
-    
-    
 }

@@ -43,7 +43,7 @@ public class Edge {
     public String toString(){
         String s = ("source : " + source.toString() + "\n" +"destinaton : " + destination.toString() + "\n" + "bends : ");
         for (Coord c : bends){
-            s += c.toString() + " , ";
+            s += c.getX() + ";" + c.getY() + " , ";
         }
         s += "\n";
         return s;

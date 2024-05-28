@@ -18,15 +18,9 @@ public class Node {
     
     private static int numberOfNodes = 0;
     
-    private HashSet<Node> neighbours;
-    private HashSet<Node> sucessors;
-    private HashSet<Node> predecessors;
     
     public Node(Coord c){
         coord = c;
-        neighbours = new HashSet<Node>();
-        sucessors = new HashSet<Node>();
-        predecessors = new HashSet<Node>();
         numberOfNodes++;
         id = numberOfNodes;
     }
@@ -55,45 +49,6 @@ public class Node {
     
     public Coord getCoord(){
         return coord;
-    }
-    
-    public HashSet<Node> getNeighbour(){
-        return neighbours;
-    }
-    
-    public void removeNeighbour(Node n){
-        neighbours.remove(n);
-    }
-    
-    public void addNeighbour(Node n){
-        if (n != null)
-            neighbours.add(n);
-    }
-    
-    public HashSet<Node> getSucessor(){
-        return sucessors;
-    }
-    
-    public void removeSucessor(Node n){
-        sucessors.remove(n);
-    }
-    
-    public void addSucessor(Node n){
-        if (n != null)
-            sucessors.add(n);
-    }
-    
-    public HashSet<Node> getPredecessor(){
-        return predecessors;
-    }
-    
-    public void removePredecessor(Node n){
-        predecessors.remove(n);
-    }
-    
-    public void addPredecessor(Node n){
-        if (n != null)
-            predecessors.add(n);
     }
     
     public int getId(){
