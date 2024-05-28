@@ -4,8 +4,10 @@
  */
 package main.java.info.iut.sae2.graphs;
 
+import java.awt.GridBagConstraints;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
 
 /**
@@ -276,7 +278,7 @@ public class Graph implements IGraph{
     
     @Override
     public void setEdgePosition(Edge e, ArrayList<Coord> bends){
-        if (e != null && !bends.contains(null)){
+        if (e != null && !bends.contains(null) && bends.size()==2){
             e.getSource().setCoord(bends.get(0));
             e.getDestination().setCoord(bends.get(1));
         }
@@ -293,7 +295,7 @@ public class Graph implements IGraph{
     
     @Override
     public void setAllEdgesPositions(ArrayList<Coord> bends){
-        if (!bends.contains(null)){
+        if (!bends.contains(null) && bends.size() == 2){
             for (Edge e : edges){
                 setEdgePosition(e, bends);
             }
@@ -322,7 +324,32 @@ public class Graph implements IGraph{
     
     @Override
     public Graph getMinimumSpanningTree(){
-        return null;
+        if (this.numberOfNodes() == 0)
+            return null;
+        Graph res = new Graph();
+        for (Node n: nodes)
+            res.addNode(n);
+        HashSet<Node> isTreated = new HashSet<>();
+        isTreated.add((Node)nodes.toArray()[0]);
+        for (int i = 0 ; i<nodes.size()-1; i++){
+            Double minWeight = Double.MAX_VALUE;
+            Edge minEdge = null;
+            for (Edge e : edges){
+                if (isTreated.contains(e.getSource()) != isTreated.contains(e.getDestination())){
+                    Double weight = e.getDistance();
+                    if (weight < minWeight){
+                        minWeight = weight;
+                        minEdge = e;
+                    }
+                }
+            }
+            res.addEdge(minEdge);
+            if (!isTreated.contains(minEdge.getSource()))
+                isTreated.add(minEdge.getSource());
+            else
+                isTreated.add(minEdge.getDestination());
+        }
+        return res;
     }
     
     @Override

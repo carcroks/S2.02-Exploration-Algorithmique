@@ -34,9 +34,14 @@ public class Edge {
         return destination;
     }
     
+    public Double getDistance(){
+        return source.getCoord().dist(destination.getCoord());
+    }
+    
     @Override
     public String toString(){
         return ("source : " + source.toString() + "\n" +"destinaton :" + destination.toString() + "\n");
     }
+    
     
 }
