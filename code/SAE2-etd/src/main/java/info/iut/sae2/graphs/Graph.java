@@ -352,47 +352,8 @@ public class Graph implements IGraph{
         return new ArrayList<>(Arrays.asList(new Coord(minx, miny), new Coord(maxx, maxy)));
     }
     
-    //@Override
-    public Graph getMinimumSpanningTree1(){
-        long startTime;
-        long endTime;
-        startTime = System.currentTimeMillis();
-        
-        if (this.numberOfNodes() == 0)
-            return null;
-        Graph res = new Graph();
-        for (Node n: nodes)
-            res.addNode(n);
-        HashSet<Node> isTreated = new HashSet<>();
-        isTreated.add((Node)nodes.toArray()[0]);
-        for (int i = 0 ; i<nodes.size()-1; i++){
-            Double minWeight = Double.MAX_VALUE;
-            Edge minEdge = null;
-            for (Edge e : edges){
-                if (isTreated.contains(e.getSource()) != isTreated.contains(e.getDestination())){
-                    Double weight = e.getDistance();
-                    if (weight < minWeight){
-                        minWeight = weight;
-                        minEdge = e;
-                    }
-                }
-            }
-            res.addEdge(minEdge);
-            if (!isTreated.contains(minEdge.getSource()))
-                isTreated.add(minEdge.getSource());
-            else
-                isTreated.add(minEdge.getDestination());
-        }
-        endTime = System.currentTimeMillis();
-        System.out.println("" + (endTime - startTime)/1000.0);
-        return res;
-    }
-    
     @Override
     public Graph getMinimumSpanningTree(){
-        long startTime;
-        long endTime;
-        startTime = System.currentTimeMillis();
         
         if (this.numberOfNodes() == 0)
             return null;
@@ -432,19 +393,12 @@ public class Graph implements IGraph{
                 isTreatable.add(minEdge.getDestination());
             }
         }
-        
-        endTime = System.currentTimeMillis();
-        System.out.println("" + (endTime - startTime)/1000.0);
         return res;
     }
     
     
     @Override
     public void bundle(){
-        long startTime;
-        long endTime;
-        startTime = System.currentTimeMillis();
-        
         Graph g = getMinimumSpanningTree();
         for (Edge e : edges){
             e.emptyBends();
@@ -474,9 +428,6 @@ public class Graph implements IGraph{
                 predecessor = predecessorMap.get(predecessor);
             }    
         }
-        
-        endTime = System.currentTimeMillis();
-        System.out.println("" + (endTime - startTime)/1000.0);
     }
 
     
