@@ -24,12 +24,16 @@ public class Graph implements IGraph{
     private HashMap<Node, HashSet<Node>> Sucessors;
     private HashMap<Node, HashSet<Node>> Predecessors;
     
+    private HashMap<Node, HashSet<Edge>> neighbouringEdges;
+    
     public Graph(){
         nodes= new HashSet<>();
         edges = new HashSet<>();
         Neighbors = new HashMap<>();
         Sucessors = new HashMap<>();
         Predecessors = new HashMap<>();
+        
+        neighbouringEdges = new HashMap<>();
     }
     
     @Override
@@ -39,6 +43,7 @@ public class Graph implements IGraph{
         Neighbors.put(n, new HashSet<>());
         Sucessors.put(n, new HashSet<>());
         Predecessors.put(n, new HashSet<>());
+        neighbouringEdges.put(n, new HashSet<>());
         return n;
     }
     
@@ -50,6 +55,7 @@ public class Graph implements IGraph{
         Neighbors.put(n, new HashSet<>());
         Sucessors.put(n, new HashSet<>());
         Predecessors.put(n, new HashSet<>());
+        neighbouringEdges.put(n, new HashSet<>());
         return n;
     }
     
@@ -66,6 +72,9 @@ public class Graph implements IGraph{
         Neighbors.get(e.getDestination()).add(e.getSource());
         Sucessors.get(e.getSource()).add(e.getDestination());
         Predecessors.get(e.getDestination()).add(e.getSource());
+        
+        neighbouringEdges.get(e.getSource()).add(e);
+        neighbouringEdges.get(e.getDestination()).add(e);
         return e;
     }
     
@@ -83,6 +92,9 @@ public class Graph implements IGraph{
         Neighbors.get(tgt).add(src);
         Sucessors.get(src).add(tgt);
         Predecessors.get(tgt).add(src);
+        
+        neighbouringEdges.get(e.getSource()).add(e);
+        neighbouringEdges.get(e.getDestination()).add(e);
         return e;
     }
     
@@ -95,11 +107,13 @@ public class Graph implements IGraph{
                 if (e.getSource() == n){
                     Predecessors.get(e.getDestination()).remove(n);
                     Neighbors.get(e.getDestination()).remove(n);
+                    neighbouringEdges.get(e.getDestination()).remove(e);
                     toDelete.add(e);
                 }
                 else if (e.getDestination() == n){
                     Sucessors.get(e.getSource()).remove(n);
                     Neighbors.get(e.getSource()).remove(n);
+                    neighbouringEdges.get(e.getSource()).remove(e);
                     toDelete.add(e);
                 }
             }
@@ -115,7 +129,11 @@ public class Graph implements IGraph{
             Neighbors.get(e.getSource()).remove(e.getDestination());
             Neighbors.get(e.getDestination()).remove(e.getSource());
             Sucessors.get(e.getSource()).remove(e.getDestination());
-            Predecessors.get(e.getDestination()).remove(e.getSource());        
+            Predecessors.get(e.getDestination()).remove(e.getSource());
+            
+            neighbouringEdges.get(e.getSource()).remove(e);
+            neighbouringEdges.get(e.getDestination()).remove(e);
+            
             edges.remove(e);
         }
     }
@@ -334,8 +352,12 @@ public class Graph implements IGraph{
         return new ArrayList<>(Arrays.asList(new Coord(minx, miny), new Coord(maxx, maxy)));
     }
     
-    @Override
-    public Graph getMinimumSpanningTree(){
+    //@Override
+    public Graph getMinimumSpanningTree1(){
+        long startTime;
+        long endTime;
+        startTime = System.currentTimeMillis();
+        
         if (this.numberOfNodes() == 0)
             return null;
         Graph res = new Graph();
@@ -361,14 +383,70 @@ public class Graph implements IGraph{
             else
                 isTreated.add(minEdge.getDestination());
         }
+        endTime = System.currentTimeMillis();
+        System.out.println("" + (endTime - startTime)/1000.0);
+        return res;
+    }
+    
+    @Override
+    public Graph getMinimumSpanningTree(){
+        long startTime;
+        long endTime;
+        startTime = System.currentTimeMillis();
+        
+        if (this.numberOfNodes() == 0)
+            return null;
+        Graph res = new Graph();
+        HashSet<Node> isTreated = new HashSet<>();
+        HashSet<Node> isTreatable = new HashSet<>();
+        
+        isTreated.add((Node)nodes.toArray()[0]);
+        isTreatable.add((Node)nodes.toArray()[0]);
+        for (int i = 0 ; i<nodes.size()-1; i++){
+            Double minWeight = Double.MAX_VALUE;
+            Edge minEdge = null;
+            HashSet<Node> toRemove = new HashSet<>();
+            for (Node n : isTreatable){
+                Boolean treatable = false;
+                for (Edge e : neighbouringEdges.get(n)){
+                    if (isTreated.contains(e.getSource()) != isTreated.contains(e.getDestination())){
+                        treatable = true;
+                        Double weight = e.getDistance();
+                        if (weight < minWeight){
+                            minWeight = weight;
+                            minEdge = e;
+                        }
+                    }
+                }
+                if (!treatable)
+                    toRemove.add(n);
+            }
+            isTreatable.removeAll(toRemove);
+            res.addEdge(minEdge);
+            if (!isTreated.contains(minEdge.getSource())){
+                isTreated.add(minEdge.getSource());
+                isTreatable.add(minEdge.getSource());
+            }
+            else{
+                isTreated.add(minEdge.getDestination());
+                isTreatable.add(minEdge.getDestination());
+            }
+        }
+        
+        endTime = System.currentTimeMillis();
+        System.out.println("" + (endTime - startTime)/1000.0);
         return res;
     }
     
     @Override
     public void bundle(){
+        long startTime;
+        long endTime;
+        startTime = System.currentTimeMillis();
+        
         Graph g = getMinimumSpanningTree();
-        System.out.println(edges.size());
         for (Edge e : edges){
+            e.emptyBends();
             HashMap<Node, Node> predecessorMap = new HashMap<>();
             predecessorMap.put(e.getSource(), new Node(new Coord(0,0)));
             Boolean trouve = false;
@@ -395,5 +473,20 @@ public class Graph implements IGraph{
                 predecessor = predecessorMap.get(predecessor);
             }    
         }
+        
+        endTime = System.currentTimeMillis();
+        System.out.println("" + (endTime - startTime)/1000.0);
+    }
+
+    
+    @Override
+    public String toString() {
+        String s = "Here is the graph : " + this.numberOfEdges() + " edges and " + this.numberOfNodes() + "nodes \n";
+        for (Node n : nodes)
+            s += n.toString();
+        s+= "\n\n";
+        for (Edge e: edges)
+            s+= e.toString() + "\n";
+        return s;
     }
 }

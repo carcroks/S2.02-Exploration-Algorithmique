@@ -4,6 +4,8 @@
  */
 package main.java.info.iut.sae2.graphs;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -24,6 +26,22 @@ public class EdgeTest {
     Node n2 = new Node(new Coord(2,2));
     Edge e = new Edge(n1,n2);
 
+    @BeforeClass
+    public static void setUpClass() throws Exception {
+    }
+
+    @AfterClass
+    public static void tearDownClass() throws Exception {
+    }
+
+    @Before
+    public void setUp() throws Exception {
+    }
+
+    @After
+    public void tearDown() throws Exception {
+    }
+
     /**
      * Test of getSource method, of class Edge.
      */
@@ -43,12 +61,67 @@ public class EdgeTest {
     }
 
     /**
-     * Test of toString method, of class Edge.
+     * Test of getDistance method, of class Edge.
      */
     @Test
-    public void testToString() {
-        System.out.println("toString");
-        assert(e.toString().equals("source : X : 1.0  Y : 1.0\ndestinaton :X : 2.0  Y : 2.0\n"));
+    public void testGetDistance() {
+        Node n1 = new Node(new Coord(0,0));
+        Node n2 = new Node(new Coord(3,4));
+        Edge e1 = new Edge(n1,n2);
+        assert(e1.getDistance() == 5);
+    }
+
+    /**
+     * Test of getBends method, of class Edge.
+     */
+    @Test
+    public void testGetBends() {
+        Coord c1 = new Coord(2,2);
+        Coord c2 = new Coord(4,4);
+        Node n1 = new Node(new Coord(0,0));
+        Node n2 = new Node(new Coord(3,4));
+        ArrayList<Coord> bends = new ArrayList<Coord>(Arrays.asList(c1,c2));
+        Edge e1 = new Edge(n1,n2);
+        e1.setBends(bends);
+        ArrayList<Coord> res = e1.getBends();
+        assert(res == bends);
+    }
+
+    /**
+     * Test of setBends method, of class Edge.
+     */
+    @Test
+    public void testSetBends() {
+        Coord c1 = new Coord(2,2);
+        Coord c2 = new Coord(4,4);
+        Node n1 = new Node(new Coord(0,0));
+        Node n2 = new Node(new Coord(3,4));
+        ArrayList<Coord> bends = new ArrayList<Coord>(Arrays.asList(c1,c2));
+        Edge e1 = new Edge(n1,n2);
+        e1.setBends(bends);
+        ArrayList<Coord> res = e1.getBends();
+        assert(res == bends);
+    }
+
+    /**
+     * Test of insertBendAtIndexZero method, of class Edge.
+     */
+    @Test
+    public void testInsertBendAtIndexZero() {
+        Coord c1 = new Coord(2,2);
+        Coord c2 = new Coord(4,4);
+        Coord c3 = new Coord(6,6);
+        Node n1 = new Node(new Coord(0,0));
+        Node n2 = new Node(new Coord(3,4));
+        ArrayList<Coord> bends = new ArrayList<Coord>(Arrays.asList(c1,c2));
+        Edge e1 = new Edge(n1,n2);
+        e1.setBends(bends);
+        e1.insertBendAtIndexZero(c3);
+        ArrayList<Coord> expres = new ArrayList<Coord>(Arrays.asList(c3,c1,c2));
+        ArrayList<Coord> res = e1.getBends();
+        assertEquals(res, expres);
+        expres = new ArrayList<Coord>(Arrays.asList(c1,c2,c3));
+        assertNotEquals(res, expres);
     }
     
 }

@@ -41,7 +41,7 @@ public class Edge {
     
     @Override
     public String toString(){
-        String s = ("source : " + source.toString() + "\n" +"destinaton : " + destination.toString() + "\n" + "bends : ");
+        String s = ("source : " + source.toString()  +"destinaton : " + destination.toString() + "\n" + "bends : ");
         for (Coord c : bends){
             s += c.getX() + ";" + c.getY() + " , ";
         }
@@ -59,6 +59,10 @@ public class Edge {
     
     public void insertBendAtIndexZero(Coord c){
         bends.add(0, c);
+    }
+    
+    public void emptyBends(){
+        bends = new ArrayList<Coord>();
     }
     
     
