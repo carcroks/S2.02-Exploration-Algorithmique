@@ -16,14 +16,39 @@ import java.util.HashSet;
  */
 public class Graph implements IGraph{
     
+    /**
+     * Nodes of the graph
+     */
     private HashSet<Node> nodes;
     
+    /**
+     * Edges of the graph
+     */
     private HashSet<Edge> edges;
     
+    /**
+     * Neighbors of each Node of the graph
+     * Key is the Node, and value is the neighbouring nodes of the key
+     */
     private HashMap<Node, HashSet<Node>> Neighbors;
+    
+    /**
+     * Predecessors of each Node of the graph
+     * Key is the Node, and value is the neighbouring nodes of the key
+     */
     private HashMap<Node, HashSet<Node>> Sucessors;
+    
+    /**
+     * Sucessors of each Node of the graph
+     * Key is the Node, and value is the neighbouring nodes of the key
+     */
     private HashMap<Node, HashSet<Node>> Predecessors;
     
+    /**
+     * in and out edges of each Node of the graph
+     * Key is the Node, and value is the in and out edges of the key
+     * (used in Prim algorithm to only check the edges of the nodes that are already checked)
+     */
     private HashMap<Node, HashSet<Edge>> neighbouringEdges;
     
     public Graph(){
@@ -342,16 +367,23 @@ public class Graph implements IGraph{
         for (Node n : nodes){
             if (n.getCoord().getX()<minx)
                 minx = n.getCoord().getX();
-            else if (n.getCoord().getX()>maxx)
+            if (n.getCoord().getX()>maxx)
                 maxx = n.getCoord().getX();
             if (n.getCoord().getY()<miny)
                 miny = n.getCoord().getY();
-            else if (n.getCoord().getY()>maxy)
+            if (n.getCoord().getY()>maxy)
                 maxy = n.getCoord().getY();
         }
         return new ArrayList<>(Arrays.asList(new Coord(minx, miny), new Coord(maxx, maxy)));
     }
     
+    /**
+     * Gets the minimum spanning tree with the Prim algorithm
+     * 
+     * only checks the edges of the nodes that are already checked 
+     * 
+     * @return 
+     */
     @Override
     public Graph getMinimumSpanningTree(){
         
@@ -396,7 +428,10 @@ public class Graph implements IGraph{
         return res;
     }
     
-    
+    /**
+     * Gets the bends of each edges to create Bézier curvs
+     * uses BFS (parcours en largeur)
+     */
     @Override
     public void bundle(){
         Graph g = getMinimumSpanningTree();
@@ -430,7 +465,10 @@ public class Graph implements IGraph{
         }
     }
 
-    
+    /**
+     * Returns the strings for each node and each edge of the graph
+     * @return 
+     */
     @Override
     public String toString() {
         String s = "Here is the graph : " + this.numberOfEdges() + " edges and " + this.numberOfNodes() + "nodes \n";

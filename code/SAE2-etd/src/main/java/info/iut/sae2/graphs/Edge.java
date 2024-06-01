@@ -17,7 +17,7 @@ public class Edge {
     private Node destination;
     
     /*
-        Ensemble des points sauf source et destination pour dessiner l'arrête sour forme de courbe de Bézier
+        Points that allows to create a Bézier curv for the Edge
     */
     private ArrayList<Coord> bends;
     
@@ -27,14 +27,29 @@ public class Edge {
         bends = new ArrayList<Coord>();
     }
     
+    /**
+     * Gets the Source node of the Edge
+     * 
+     * @return source Node of the Edge
+     */
     public Node getSource(){
         return source;
     }
     
+    /**
+     * Gets the Destination node of the Edge
+     * 
+     * @return destination Node of the Edge
+     */
     public Node getDestination(){
         return destination;
     }
     
+    /**
+     * Gets the length of the Edge
+     * 
+     * @return length of the Edge
+     */
     public Double getDistance(){
         return source.getCoord().dist(destination.getCoord());
     }
@@ -49,18 +64,36 @@ public class Edge {
         return s;
     }
     
+    /**
+     * Gets the bends of the Edge (points for the Bézier curv
+     * 
+     * @return bends of the Edge
+     */
     public ArrayList<Coord> getBends(){
         return bends;
     }
     
+    /**
+     * Sets the bends of the Edge
+     * 
+     * @param p bends of the Edge
+     */
     public void setBends(ArrayList<Coord> p){
         bends = p;
     }
     
+    /**
+     * Inserts a bend at the start (index 0) of the bends ArrayList
+     * 
+     * @param c Coord to insert at the start of the bends
+     */
     public void insertBendAtIndexZero(Coord c){
         bends.add(0, c);
     }
     
+    /**
+     * Empties the bends of the Edge
+     */
     public void emptyBends(){
         bends = new ArrayList<Coord>();
     }
